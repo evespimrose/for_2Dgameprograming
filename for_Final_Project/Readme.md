@@ -26,11 +26,13 @@
 
 ## 2. GameState(Scene)의 수 및 각각의 이름
 
-> * GameState(Scene)의 수 : **3개**
+> * GameState(Scene)의 수 : **5개**
 > * 각각의 이름
 >   * '**loading state**'
 >   * '**title state**'
 >   * '**game state**'
+>   * '**clear state**'
+>   * '**over state**'
 
 
 
@@ -54,11 +56,17 @@
 > ### 3.3. **game state**
 >
 >  * 게임의 전체적인 내용을 담당하는 Scene.
->  *  배경의 바닥 'ground'와 벽 'wall' 객체, 플레이어 'player'와 적 'enemy' 객체, 그리고 총 'gun'과 총알 'bullet' 무기 토큰 'token' 객체를 화면에 출력합니다.
+>  *  배경의 바닥 'ground'와 벽 'wall' 객체, 플레이어 'player'와 적 'enemy' 객체, 그리고 총 'gun'과 총알 'bullet' 무기 토큰 'token' 객체, 최종 목적지 'clear', 중간 목적지 'portal' 객체를 화면에 출력합니다.
 >  * 키보드의 `'q'`, `'w'`, `'e'`, `'a'`, `'d'`, `'z'`, `'x'`, `'c'`, `'space'` 키, 상하좌우 이동(`Arrow`)키 입력,`'esc'`키 입력과 마우스의 특정 좌표 클릭 이벤트를 관리합니다.
->  * `'esc'`키를 입력해 메뉴를 띄운 뒤, '게임 종료' 버튼을 마우스로 클릭하면 `title state`로 이동합니다.
-
-
+>  * `'esc'`키를 입력해 메뉴를 띄운 뒤, '게임 종료' 버튼을 마우스로 클릭하면 `title state`로 이동합니다. 플레이중, 플레이어 객체를 최종 목적지로 이동시키면 `clear state`로 이동합니다. 플레이어 객체가 총알에 맞아 라이프가 0이 되면 `over state`로 이동합니다. 
+> ### 3.4. **clear state**
+>  * 플레이어가 최종 목적지에 도달하면 게임을 클리어 했음을 알려주는 Scene.
+>  * 하나의 그림으로 구성된 객체 'game clear'를 화면에 출력합니다.
+>  * `'s'`키를 입력하면 `title state`로 이동합니다.
+> ### 3.4. **over state**
+>  * 플레이 도중 사망하면 게임 오버 했음을 알려주는 Scene.
+>  * 하나의 그림으로 구성된 객체 'game over'를 화면에 출력합니다.
+>  * `'s'`키를 입력하면 `title state`로 이동합니다.
 
 ## 4. 필요한 기술
 
