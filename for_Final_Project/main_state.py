@@ -1,5 +1,6 @@
 import gfw
 from pico2d import *
+from player import Player
 
 canvas_width = 800
 canvas_height = 600
@@ -13,20 +14,22 @@ def enter():
     player = Player()
     gfw.world.add(gfw.layer.player, player)
 
-    global font
-    font = gfw.font.load(gobj.RES_DIR + '/segoeprb.ttf', 40)
-
 
 def update():
-    pass
+    gfw.world.update()
 
 
 def draw():
-    pass
+    gfw.world.draw()
 
 
-def handle_events():
-    pass
+def handle_events(e):
+    if e.type == SDL_QUIT:
+        gfw.quit()
+    elif e.type == SDL_KEYDOWN:
+        if e.key == SDLK_ESCAPE:
+            gfw.pop()
+    player.handle_event(e)
 
 
 def exit():

@@ -1,43 +1,72 @@
 import random
 from pico2d import *
 import gfw
+import math
 from gobj import *
+
+MOVE_PPS = 300
 
 
 class Player:
-    KEY_MAP = {
-        (SDL_KEYDOWN, SDLK_LEFT): -1,
-        (SDL_KEYDOWN, SDLK_RIGHT): 1,
-        (SDL_KEYUP, SDLK_LEFT): 1,
-        (SDL_KEYUP, SDLK_RIGHT): -1,
-        (SDL_KEYDOWN, SDLK_DOWN): -1,
-        (SDL_KEYDOWN, SDLK_UP): 1,
-        (SDL_KEYUP, SDLK_DOWN): 1,
-        (SDL_KEYUP, SDLK_UP): -1,
-    }
-    KEY_DOWN_SPACE = (SDL_KEYDOWN, SDLK_SPACE)
     image = None
 
-    def __init__(self, rand_pos=False):
-        if rand_pos:
-            self.pos = (200, 200)
-            self.action = random.randint(0, 3)
-        else:
-            self.pos = get_canvas_width() // 2, get_canvas_height() // 2
-            self.action = 3
-        self.data = 0, 0
-        self.fidx = random.randint(0, 7)
-        self.target = None
-        self.targets = []
-        self.speed = 0
+    def __init__(self):
+        targets = None
+        global image, pos, delta
+        pos = get_canvas_width() // 2, get_canvas_height() // 2
+        target = None
+        targets = []
+        delta = 0, 0
         if Player.image is None:
             Player.image = gfw.iamge.load(RES_DIR + '/player.png')
 
     def draw(self):
-        sx = self.fidx * 100
-        sy = self.action * 100
-        self.image.clip_draw(sx, sy, 100, 100, *self.pos)
+        global pos, image
+        gfw.image.draw(*pos)
 
     def update(self):
-        self.x += self.dx * self.speed * gfw.delta_time
+        global pos, delta_x, delta_y
+        x, y = pos
+        x += delta_x * MOVE_PPS * gfw.delta_time
+        y += delta_y * MOVE_PPS * gfw.delta_time
+        hw, hh = image.w // 2, image.h // 2
+        x = clamp(hw, x, get_canvas_height() - hw)
+        y = clamp(hh, y, get_canvas_width() - hh)
 
+        pos = x, y
+
+    def delta(self, target):
+        dx, dy = target[0] - self.pos[0], target[1] - pos[1]
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+        if distance == 0: return 0, 0
+        return dx / distance, dy / distance
+
+    def appendTarget(self, target):
+        if target == self.pos: return
+        for t in self.targets:
+            if t == target: return
+
+        self.delta = (0, 0) if target is None else delta(pos, target)
+
+        self.targets.append(target)
+
+    def handle_event(e):
+        global delta_x, delta_y
+        if e.type == SDL_KEYDOWN:
+            if e.key == SDLK_LEFT:
+                delta_x -= 1
+            elif e.key == SDLK_RIGHT:
+                delta_x += 1
+            if e.key == SDLK_DOWN:
+                delta_y -= 1
+            elif e.key == SDLK_UP:
+                delta_y += 1
+        elif e.type == SDL_KEYUP:
+            if e.key == SDLK_LEFT:
+                delta_x += 1
+            elif e.key == SDLK_RIGHT:
+                delta_x -= 1
+            if e.key == SDLK_DOWN:
+                delta_y += 1
+            elif e.key == SDLK_UP:
+                delta_y -= 1
